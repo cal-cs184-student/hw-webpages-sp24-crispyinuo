@@ -162,6 +162,29 @@ Compare rendering times on a few scenes with moderately complex geometries with 
       primitives in the scene, enabling faster ray-primitive intersection tests by quickly culling large portions of
       the scene that are not relevant to a given ray.</p>
 
+    <p>
+      Our BVH construction algorithm is designed to optimize the rendering process by efficiently organizing the scene's
+      geometry. The key component of this algorithm is the choice of the splitting heuristic used to divide the
+      primitives into left and right subsets. We chose the <strong>Surface Area Heuristic (SAH)</strong> for this
+      purpose, as it provides a good balance between tree depth and node quality.
+    </p>
+    <p>
+      The algorithm proceeds as follows:
+    <ol>
+      <li><strong>Bounding Box Calculation:</strong> Compute the bounding box for the given set of primitives.</li>
+      <li><strong>Leaf Node Check:</strong> If the number of primitives is less than or equal to the maximum leaf size,
+        create a leaf node.</li>
+      <li><strong>Splitting Axis Selection:</strong> Choose the axis to split along based on the axis with the largest
+        extent in the bounding box.</li>
+      <li><strong>Splitting Point Determination:</strong> Determine the splitting point using the SAH, which minimizes
+        the cost function based on the surface area and the number of primitives.</li>
+      <li><strong>Partitioning:</strong> Divide the primitives into left and right subsets based on their centroids'
+        positions relative to the splitting point.</li>
+      <li><strong>Recursive Construction:</strong> Recursively construct the left and right child nodes using the
+        corresponding subsets of primitives.</li>
+    </ol>
+    </p>
+
     <h3>Task 1: Constructing the BVH</h3>
     <p>I constructed the BVH recursively, starting with a single bounding box encompassing all primitives. If a node
       contained more than a certain threshold of primitives, it was split into two child nodes along the longest axis
@@ -208,12 +231,7 @@ Compare rendering times on a few scenes with moderately complex geometries with 
     <h3>Performance Improvements</h3>
     <p>The implementation of the BVH led to significant performance improvements. Rendering complex scenes like the
       Stanford Bunny and the Cow model became much faster. For example, rendering the Cow model with BVH took only
-      0.173 seconds compared to 40 seconds without BVH.</p>
-
-    <h3>Conclusion</h3>
-    <p>The addition of the Bounding Volume Hierarchy to the Pathtracer project greatly enhanced its efficiency in
-      rendering complex scenes. This optimization allowed for the rendering of scenes with high geometric complexity
-      in a fraction of the time previously required.</p>
+      0.004 seconds compared to 18.4 seconds without BVH.</p>
 
     <h3>
       Show images with normal shading for a few large .dae files that you can only render with BVH acceleration.
@@ -285,6 +303,28 @@ Compare rendering times on a few scenes with moderately complex geometries with 
         </tr>
       </tbody>
     </table>
+
+    <h3>Extra Credits</h3>
+    <p>We use median approach for dividing the primitives. The heuristic chosen for splitting points entails sorting all
+      primitives within this node along the specified
+      axis. Then, the median primitive is utilized as the dividing boundary, segregating this node into left and right
+      child nodes. Primitives with coordinates smaller than the median along the given axis are assigned to the left
+      child node, while primitives with larger coordinates are assigned to the right child node.</p>
+
+    <div align="center">
+      <table style="width=100%">
+        <tr>
+          <td align="middle">
+            <img src="images/task2/medianSplit.jpeg" width="480px" />
+        </tr>
+      </table>
+    </div>
+
+    <h3>Conclusion</h3>
+    <p>The addition of the Bounding Volume Hierarchy to the Pathtracer project greatly enhanced its efficiency in
+      rendering complex scenes. This optimization allowed for the rendering of scenes with high geometric complexity
+      in a fraction of the time previously required.</p>
+
 
     <br>
 
@@ -777,6 +817,12 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
       </table>
     </div>
     <br>
+
+    <h2 align="middle">Part 6: Extra Credits</h2>
+    <p>In Part 2, We implemented the median approach for dividing the primitives. In the
+      construction of the BVH, we calculated the midpoint of the sorted primitives along the chosen axis and use this
+      point to split the primitives into left and right subsets. For details, please see part 2 "extra credits" part.
+    </p>
 
     <h3>Collaboration and individual contribution</h3>
     <p>In this project, my partner Jiahui and I collaborated effectively to implement the various components of the path
